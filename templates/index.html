@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BookFinder</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .search-box { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 16px; 
+            margin: 15px 0; 
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .filters select, .filters input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .advanced-search {
+            margin: 15px 0;
+        }
+        
+        .advanced-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .advanced-options {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .popular-searches {
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .popular-searches h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .popular-btn {
+            background: #e9ecef;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .popular-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .stat {
+            padding: 15px;
+        }
+        
+        .stat h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 0;
+        }
+        
+        .stat p {
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+        
+        .featured-books {
+            margin: 30px 0;
+        }
+        
+        .featured-books h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .featured-carousel {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 15px 0;
+            scrollbar-width: thin;
+        }
+        
+        .featured-book {
+            min-width: 100px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .featured-book:hover {
+            transform: scale(1.05);
+        }
+        
+        .featured-book img {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .featured-book .placeholder {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .featured-book p {
+            margin: 8px 0 0 0;
+            font-size: 12px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .book { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: none;
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .book:hover {
+            transform: translateY(-2px);
+        }
+        
+        .book img { 
+            float: left; 
+            margin-right: 20px; 
+            max-width: 120px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .book .placeholder-img {
+            float: left;
+            width: 120px;
+            height: 180px;
+            background: #ddd;
+            margin-right: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .loading { 
+            display: none; 
+            color: #666; 
+            text-align: center;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        
+        .book h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.4em;
+        }
+        
+        .book a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .book a:hover {
+            background: #764ba2;
+            text-decoration: none;
+        }
+        
+        .results-count {
+            color: #666;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .featured-loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 BookFinder</h1>
+        <p class="tagline">Discover your next favorite book from millions of titles</p>
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat">
+                <h3>10,000+</h3>
+                <p>Books Available</p>
+            </div>
+            <div class="stat">
+                <h3>100+</h3>
+                <p>Categories</p>
+            </div>
+            <div class="stat">
+                <h3>24/7</h3>
+                <p>Available</p>
+            </div>
+        </div>
+        
+        <!-- Search Box -->
+        <input type="text" id="searchInput" class="search-box" 
+               placeholder="🔍 Search for books by title, author, or keyword..." 
+               onkeyup="searchBooks()">
+        
+        <!-- Search Filters -->
+        <div class="filters">
+            <select id="filterType">
+                <option value="all">All Books</option>
+                <option value="title">Title Only</option>
+                <option value="author">Author Only</option>
+                <option value="isbn">ISBN</option>
+            </select>
+            
+            <select id="sortBy">
+                <option value="relevance">Sort by Relevance</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+        </div>
+        
+        <!-- Advanced Search -->
+        <div class="advanced-search">
+            <button class="advanced-btn" onclick="toggleAdvanced()">🔧 Advanced Search Options</button>
+            <div id="advancedOptions" class="advanced-options">
+                <div class="filters">
+                    <input type="number" id="yearFrom" placeholder="Year From" min="1900" max="2025">
+                    <input type="number" id="yearTo" placeholder="Year To" min="1900" max="2025">
+                    <input type="text" id="language" placeholder="Language (e.g., en)">
+                    <input type="text" id="publisher" placeholder="Publisher">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Popular Searches -->
+        <div class="popular-searches">
+            <h3>🔥 Popular Searches:</h3>
+            <button class="popular-btn" onclick="quickSearch('Harry Potter')">Harry Potter</button>
+            <button class="popular-btn" onclick="quickSearch('Stephen King')">Stephen King</button>
+            <button class="popular-btn" onclick="quickSearch('Python Programming')">Python</button>
+            <button class="popular-btn" onclick="quickSearch('Romance')">Romance</button>
+            <button class="popular-btn" onclick="quickSearch('Science Fiction')">Sci-Fi</button>
+            <button class="popular-btn" onclick="quickSearch('Mystery')">Mystery</button>
+        </div>
+        
+        <!-- Featured Books -->
+        <div class="featured-books">
+            <h3>⭐ Featured Books</h3>
+            <div id="featuredLoading" class="featured-loading">Loading featured books...</div>
+            <div id="featuredCarousel" class="featured-carousel">
+                <!-- JavaScript will populate this -->
+            </div>
+        </div>
+        
+        <!-- Loading & Results -->
+        <div id="loading" class="loading">
+            <div>🔍 Searching through thousands of books...</div>
+        </div>
+        
+        <div id="results-count" class="results-count"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Featured books with real search queries that return good results
+        const featuredBooks = [
+            { title: "Harry Potter", query: "Harry Potter" },
+            { title: "The Hobbit", query: "The Hobbit" },
+            { title: "1984", query: "1984 George Orwell" },
+            { title: "Pride & Prejudice", query: "Pride and Prejudice" },
+            { title: "The Great Gatsby", query: "The Great Gatsby" },
+            { title: "To Kill a Mockingbird", query: "To Kill a Mockingbird" },
+            { title: "The Alchemist", query: "The Alchemist" },
+            { title: "The Da Vinci Code", query: "The Da Vinci Code" }
+        ];
+
+        // Load featured books with real images
+        async function initFeaturedBooks() {
+            const carousel = document.getElementById('featuredCarousel');
+            const featuredLoading = document.getElementById('featuredLoading');
+            
+            carousel.innerHTML = '';
+            
+            for (const book of featuredBooks) {
+                try {
+                    const response = await fetch(`/search?q=${encodeURIComponent(book.query)}&maxResults=1`);
+                    const books = await response.json();
+                    
+                    if (books && books.length > 0 && !books.error) {
+                        const firstBook = books[0];
+                        const bookElement = document.createElement('div');
+                        bookElement.className = 'featured-book';
+                        
+                        if (firstBook.thumbnail) {
+                            bookElement.innerHTML = `
+                                <img src="${firstBook.thumbnail}" alt="${firstBook.title}" 
+                                     onerror="this.style.display='none'; this.parentNode.querySelector('.placeholder').style.display='flex';">
+                                <div class="placeholder" style="display: none;">📖</div>
+                                <p>${firstBook.title.length > 15 ? firstBook.title.substring(0, 15) + '...' : firstBook.title}</p>
+                            `;
+                        } else {
+                            bookElement.innerHTML = `
+                                <div class="placeholder">📖</div>
+                                <p>${book.title}</p>
+                            `;
+                        }
+                        
+                        bookElement.onclick = () => quickSearch(book.query);
+                        carousel.appendChild(bookElement);
+                    } else {
+                        // Fallback if no book found
+                        const bookElement = document.createElement('div');
+                        bookElement.className = 'featured-book';
+                        bookElement.innerHTML = `
+                            <div class="placeholder">📖</div>
+                            <p>${book.title}</p>
+                        `;
+                        bookElement.onclick = () => quickSearch(book.query);
+                        carousel.appendChild(bookElement);
+                    }
+                } catch (error) {
+                    console.error('Error loading featured book:', error);
+                    // Fallback
+                    const bookElement = document.createElement('div');
+                    bookElement.className = 'featured-book';
+                    bookElement.innerHTML = `
+                        <div class="placeholder">📖</div>
+                        <p>${book.title}</p>
+                    `;
+                    bookElement.onclick = () => quickSearch(book.query);
+                    carousel.appendChild(bookElement);
+                }
+            }
+            
+            featuredLoading.style.display = 'none';
+        }
+
+        // Quick search function
+        function quickSearch(query) {
+            document.getElementById('searchInput').value = query;
+            searchBooks();
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Toggle advanced search
+        function toggleAdvanced() {
+            const options = document.getElementById('advancedOptions');
+            options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Main search function
+        function searchBooks() {
+            const query = document.getElementById('searchInput').value;
+            const results = document.getElementById('results');
+            const loading = document.getElementById('loading');
+            const resultsCount = document.getElementById('results-count');
+            
+            if (query.length < 2) {
+                results.innerHTML = '';
+                resultsCount.innerHTML = '';
+                loading.style.display = 'none';
+                return;
+            }
+            
+            loading.style.display = 'block';
+            results.innerHTML = '';
+            resultsCount.innerHTML = '';
+            
+            // Add delay to avoid too many API calls
+            setTimeout(() => {
+                fetch(`/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(books => {
+                        loading.style.display = 'none';
+                        
+                        if (books.error) {
+                            results.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">
+                                                Error: ${books.error}</div>`;
+                            return;
+                        }
+                        
+                        if (books.length === 0) {
+                            results.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">No books found. Try a different search term.</div>';
+                            return;
+                        }
+                        
+                        resultsCount.innerHTML = `Found ${books.length} books`;
+                        
+                        books.forEach(book => {
+                            const bookDiv = document.createElement('div');
+                            bookDiv.className = 'book';
+                            
+                            const description = book.description ? 
+                                book.description.substring(0, 150) + '...' : 
+                                'No description available.';
+                            
+                            const authors = book.authors.join(', ');
+                            const published = book.publishedDate ? 
+                                new Date(book.publishedDate).getFullYear() : 'Unknown';
+                            
+                            let imageHtml = '';
+                            if (book.thumbnail) {
+                                imageHtml = `<img src="${book.thumbnail}" alt="${book.title}" 
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                           <div class="placeholder-img" style="display: none;">No Image</div>`;
+                            } else {
+                                imageHtml = '<div class="placeholder-img">No Image<br>Available</div>';
+                            }
+                            
+                            bookDiv.innerHTML = `
+                                ${imageHtml}
+                                <h3>${book.title}</h3>
+                                <p><strong>Authors:</strong> ${authors}</p>
+                                <p><strong>Published:</strong> ${published}</p>
+                                <p>${description}</p>
+                                ${book.infoLink ? `<a href="${book.infoLink}" target="_blank">📖 View Book Details</a>` : ''}
+                                <div style="clear: both;"></div>
+                            `;
+                            
+                            results.appendChild(bookDiv);
+                        });
+                    })
+                    .catch(error => {
+                        loading.style.display = 'none';
+                        results.innerHTML = `<div style="color: red; text-align: center; padding: 20px;">
+                                            Error searching: ${error}</div>`;
+                    });
+            }, 500);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initFeaturedBooks);
+    </script>
+</body>
+</html>
