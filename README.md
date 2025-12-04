@@ -28,3 +28,6 @@ bookfinder/
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+
+## 📝 License
+MIT License
