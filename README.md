@@ -21,3 +21,10 @@ A full-stack web application for searching millions of books in real-time using 
 4. Visit: `http://localhost:5000`
 
 ## 📁 Project Structure
+bookfinder/
+├── app.py
+├── templates/
+│ └── index.html
+├── README.md
+├── requirements.txt
+└── .gitignore
